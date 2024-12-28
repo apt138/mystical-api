@@ -1,5 +1,5 @@
-from ..model.explorer import Explorer
-from ..fake import explorer as data
+from model.explorer import Explorer
+from fake import explorer as data
 
 
 def get_all() -> list[Explorer]:

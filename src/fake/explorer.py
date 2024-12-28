@@ -1,4 +1,4 @@
-from ..model.explorer import Explorer
+from model.explorer import Explorer
 
 _explorers: list[Explorer] = [
     Explorer(name="Claude Hande", country="FR", description="Scarce during full moons"),
