@@ -14,3 +14,13 @@ sample: Creature = Creature(
 def test_create():
     resp = code.create(sample)
     assert resp == sample
+
+
+def test_get_exists():
+    resp = code.get_one("yeti")
+    assert resp == resp
+
+
+def test_get_missing():
+    resp = code.get_one("test")
+    assert resp is None
