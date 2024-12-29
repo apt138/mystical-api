@@ -1,35 +1,75 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from starlette import status
 from model.creature import Creature
-from fake import creature as service
+from service import creature as srvc
+from errors import Missing, Duplicate, INTERNAL_SERVER_ERROR_MSG
 
 router = APIRouter(tags=["creature"], prefix="/creature")
 
 
 @router.get("/")
 def get_all() -> list[Creature]:
-    return service.get_all()
+    try:
+        return srvc.get_all()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=INTERNAL_SERVER_ERROR_MSG,
+        )
 
 
 @router.get("/{name}")
 def get_one(name: str) -> Creature | None:
-    return service.get_one(name)
+    try:
+        return srvc.get_one(name)
+    except Missing as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.msg)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=INTERNAL_SERVER_ERROR_MSG,
+        )
 
 
-@router.post("/")
+@router.post("/", status_code=status.HTTP_201_CREATED)
 def create(creature: Creature) -> Creature:
-    return service.create(creature)
+    try:
+        return srvc.create(creature)
+    except Duplicate as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.msg)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=INTERNAL_SERVER_ERROR_MSG,
+        )
 
 
-@router.patch("/{name}")
-def modify(name: str, creature: Creature) -> Creature:
-    return service.modify(creature)
+# @router.patch("/{name}")
+# def modify(name: str, creature: Creature) -> Creature:
+#     return srvc.modify(creature)
 
 
 @router.put("/{name}")
 def replace(name: str, creature: Creature) -> Creature:
-    return service.replace(creature)
+    try:
+        return srvc.replace(name, creature)
+    except Missing as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.msg)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=INTERNAL_SERVER_ERROR_MSG,
+        )
 
 
-@router.delete("/{name}")
+@router.delete("/{name}", status_code=status.HTTP_204_NO_CONTENT)
 def delete(name: str) -> None:
-    return service.delete(name)
+    try:
+        return srvc.delete(name)
+    except Missing as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.msg)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=INTERNAL_SERVER_ERROR_MSG,
+        )

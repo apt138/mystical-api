@@ -1,26 +1,26 @@
 from model.creature import Creature
-from fake import creature as data
+from data import creature as db
 
 
 def get_all() -> list[Creature]:
-    return data.get_all()
+    return db.get_all()
 
 
 def get_one(name: str) -> Creature | None:
-    return data.get_one(name)
+    return db.get_one(name)
 
 
 def create(creature: Creature) -> Creature:
-    return data.create(creature)
+    return db.create(creature)
 
 
 def modify(name: str, creature: Creature) -> Creature:
-    return data.modify(creature)
+    return db.modify(creature)
 
 
 def replace(name: str, creature: Creature) -> Creature:
-    return data.replace(creature)
+    return db.replace(creature)
 
 
 def delete(name: str) -> None:
-    return data.delete(name)
+    return db.delete(name)
