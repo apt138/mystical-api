@@ -8,4 +8,9 @@ class Duplicate(Exception):
         self.msg = msg
 
 
+class InvalidUser(Exception):
+    def __init__(self, msg: str) -> None:
+        self.msg = msg
+
+
 INTERNAL_SERVER_ERROR_MSG = "Something went wrong!!"

@@ -35,8 +35,9 @@ def get_db(name: Optional[str] = None, reset: bool = False):
         # data corruption
         conn = connect(db_path, check_same_thread=False)
         cur = conn.cursor()
-    conn = connect(name, check_same_thread=True)
-    cur = conn.cursor()
+    else:
+        conn = connect(name, check_same_thread=True)
+        cur = conn.cursor()
 
 
 get_db(os.getenv("MYSTICAL_SQLITE_DB"))
