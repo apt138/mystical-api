@@ -46,15 +46,16 @@ def test_get_one_missing(sample):
 def test_replace(sample):
     new_sample = Creature(**sample.model_dump())
     new_sample.description = "test"
-    resp = creature.replace(new_sample)
+    resp = creature.replace(new_sample.name, new_sample)
     assert resp == new_sample
 
 
 def test_replace_missing(sample):
     new_sample = Creature(**sample.model_dump())
-    new_sample.name = "unknown_creature"
+    name = "unknown_creature"
+    new_sample.name = "tesing"
     with pytest.raises(Missing):
-        creature.replace(new_sample)
+        creature.replace(name, new_sample)
 
 
 def test_delete(sample):

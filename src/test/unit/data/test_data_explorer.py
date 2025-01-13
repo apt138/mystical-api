@@ -45,15 +45,16 @@ def test_get_one_missing(sample):
 def test_replace(sample):
     new_sample = Explorer(**sample.model_dump())
     new_sample.description = "testing"
-    resp = explorer.replace(new_sample)
+    resp = explorer.replace(new_sample.name, new_sample)
     assert resp == new_sample
 
 
 def test_replace_missing(sample):
     new_sample = Explorer(**sample.model_dump())
-    new_sample.name = "unknown_explorer"
+    name = "unknown_explorer"
+    new_sample.name = "testing"
     with pytest.raises(Missing):
-        _ = explorer.replace(new_sample)
+        _ = explorer.replace(name, new_sample)
 
 
 def test_delete(sample):
