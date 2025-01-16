@@ -8,8 +8,12 @@ from data.model import User as DBUser, XUser as DBXUser
 UserRow = Tuple[str, str]
 
 
-def row_to_model(row: UserRow) -> User:
-    name, hash_ = row
+def row_to_model(row: UserRow | DBUser) -> User:
+    if isinstance(row, DBUser):
+        name = row.name
+        hash_ = row.hash_
+    else:
+        name, hash_ = row
     return User(name=name, hash_=hash_)
 
 
@@ -55,7 +59,7 @@ def create(user: User, table: str = "user") -> User:
         except IntegrityError:
             raise Duplicate(f"User `{user.name}` already exists")
 
-        return get_one(user.name)
+        return user
 
 
 def replace(name: str, user: User) -> User:
@@ -79,7 +83,9 @@ def delete(name: str) -> None:
     # user = get_one(name)
     # cur.execute(stmt, params)
     with Session() as sess:
-        db = sess.query(DBUser).filter(DBUser.name == name).filter()
+        db = sess.query(DBUser).filter(DBUser.name == name).first()
         if not db:
             raise Missing(f"User `{name}` not found")
+        sess.delete(db)
+        sess.commit()
         create(user=User(name=db.name, hash_=db.hash_), table="xuser")

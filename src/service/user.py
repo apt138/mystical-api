@@ -8,7 +8,7 @@ from data import user as db
 from errors import InvalidUser
 
 ph = PasswordHasher()
-token_expiry_mintues: int = os.getenv("TOKEN_EXPIRATION_TIME_MINTUES", 15)
+token_expiry_mintues: int = int(os.getenv("TOKEN_EXPIRATION_TIME_MINTUES", 15))
 algorithm: str = "HS256"
 
 
@@ -22,7 +22,7 @@ def get_one(name: str) -> User:
 
 
 def create(user: User) -> User:
-    return db.create(user)
+    return db.create(User(name=user.name, hash_=hash_password(user.hash_)))
 
 
 def replace(name: str, user: User) -> User:
@@ -48,7 +48,7 @@ def verify_password(hash_: str, pwd: str):
 def create_access_token(name: str):
     payload: dict[str, str] = {
         "sub": name,
-        "exp": datetime.now(timedelta.utc) + timedelta(minutes=token_expiry_mintues),
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=token_expiry_mintues),
     }
     token = jwt.encode(payload, os.getenv("JWT_SECRET_KEY"), algorithm=algorithm)
     return token
